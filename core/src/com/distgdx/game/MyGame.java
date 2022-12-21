@@ -21,7 +21,7 @@ public class MyGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	OrthographicCamera camera;
 	Vector3 touch;
-	BitmapFont font;
+	BitmapFont font; // коммент
 
 	Texture[] imgMosq = new Texture[11];
 	Texture imgBG;
