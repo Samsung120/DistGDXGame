@@ -21,14 +21,14 @@ public class MyGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	OrthographicCamera camera;
 	Vector3 touch;
-	BitmapFont font; // коммент
+	BitmapFont font;
 
 	Texture[] imgMosq = new Texture[11];
 	Texture imgBG;
 
 	Sound[] sndMosq = new Sound[6];
 
-	Mosquito[] mosq = new Mosquito[21];
+	Mosquito[] mosq = new Mosquito[50];
 	int kills;
 	long timeStart, timeFromStart;
 
@@ -83,7 +83,7 @@ public class MyGame extends ApplicationAdapter {
 			for (int i = mosq.length-1; i >= 0; i--) {
 				if(mosq[i].isAlive && mosq[i].hit(touch.x, touch.y)){
 					kills++;
-					//sndMosq[MathUtils.random(sndMosq.length-1)].play();
+					sndMosq[MathUtils.random(sndMosq.length-1)].play();
 					break;
 				}
 			}
