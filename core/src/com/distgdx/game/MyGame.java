@@ -2,7 +2,7 @@ package com.distgdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class MyGame extends ApplicationAdapter {
@@ -28,9 +27,10 @@ public class MyGame extends ApplicationAdapter {
 
 	Sound[] sndMosq = new Sound[6];
 
-	Mosquito[] mosq = new Mosquito[50];
+	Mosquito[] mosq = new Mosquito[10];
 	int kills;
 	long timeStart, timeFromStart;
+	Player[] players = new Player[10];
 
 	@Override
 	public void create () {
@@ -52,6 +52,10 @@ public class MyGame extends ApplicationAdapter {
 
 		for (int i = 0; i < mosq.length; i++) {
 			mosq[i] = new Mosquito();
+		}
+
+		for (int i = 0; i < players.length; i++) {
+			players[i] = new Player("Noname");
 		}
 
 		timeStart = TimeUtils.millis();
@@ -84,6 +88,7 @@ public class MyGame extends ApplicationAdapter {
 				if(mosq[i].isAlive && mosq[i].hit(touch.x, touch.y)){
 					kills++;
 					sndMosq[MathUtils.random(sndMosq.length-1)].play();
+					if(kills == mosq.length) gameOver();
 					break;
 				}
 			}
@@ -112,6 +117,20 @@ public class MyGame extends ApplicationAdapter {
 		font.draw(batch, "Kills: "+kills, 10, SCR_HEIGHT-10);
 		font.draw(batch, timeStr, SCR_WIDTH-250, SCR_HEIGHT-10);
 		batch.end();
+	}
+
+	void gameOver(){
+		long time = timeFromStart;
+		Gdx.input.getTextInput(new Input.TextInputListener() {
+			@Override
+			public void input(String text) {
+				System.out.print(text);
+			}
+
+			@Override
+			public void canceled() {
+			}
+		}, "Заголовок окна", "подсказка ввода", "Текст перед окном ввода");
 	}
 
 	@Override
