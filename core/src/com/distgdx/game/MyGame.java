@@ -27,10 +27,11 @@ public class MyGame extends ApplicationAdapter {
 
 	Sound[] sndMosq = new Sound[6];
 
-	Mosquito[] mosq = new Mosquito[10];
+	Mosquito[] mosq = new Mosquito[5];
 	int kills;
 	long timeStart, timeFromStart;
 	Player[] players = new Player[10];
+	boolean gameOver = false;
 
 	@Override
 	public void create () {
@@ -84,6 +85,9 @@ public class MyGame extends ApplicationAdapter {
 		if(Gdx.input.justTouched()) {
 			touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camera.unproject(touch);
+			if(gameOver){
+				gameRestart();
+			}
 			for (int i = mosq.length-1; i >= 0; i--) {
 				if(mosq[i].isAlive && mosq[i].hit(touch.x, touch.y)){
 					kills++;
@@ -97,8 +101,8 @@ public class MyGame extends ApplicationAdapter {
 		// игровые события
 		for (int i = 0; i < mosq.length; i++) mosq[i].move();
 
-		timeFromStart = TimeUtils.millis() - timeStart;
-		String timeStr = timeFromStart/1000/60/60+":"+timeFromStart/1000/60%60/10+timeFromStart/1000/60%60%10+":"+timeFromStart/1000%60/10+timeFromStart/1000%60%10;
+		if(!gameOver) timeFromStart = TimeUtils.millis() - timeStart;
+
 		// возрожджение комаров
 		/*for (int i = 0; i < mosq.length; i++) {
 			if(!mosq[i].isAlive) {
@@ -115,22 +119,69 @@ public class MyGame extends ApplicationAdapter {
 			batch.draw(imgMosq[mosq[i].phase], mosq[i].scrX(), mosq[i].scrY(), mosq[i].width, mosq[i].height, 0, 0, 500, 500, mosq[i].isFlip(), false);
 		}
 		font.draw(batch, "Kills: "+kills, 10, SCR_HEIGHT-10);
-		font.draw(batch, timeStr, SCR_WIDTH-250, SCR_HEIGHT-10);
+		font.draw(batch, timeToString(timeFromStart), SCR_WIDTH-250, SCR_HEIGHT-10);
+		if(gameOver){
+			font.draw(batch, showTableOfRecords(), SCR_WIDTH/4f, SCR_HEIGHT/10f*9);
+		}
 		batch.end();
 	}
 
-	void gameOver(){
-		long time = timeFromStart;
-		Gdx.input.getTextInput(new Input.TextInputListener() {
-			@Override
-			public void input(String text) {
-				System.out.print(text);
-			}
+	void gameRestart(){
+		gameOver = false;
+		for (int i = 0; i < mosq.length; i++) {
+			mosq[i] = new Mosquito();
+		}
+		kills = 0;
+		timeStart = TimeUtils.millis();
+	}
 
-			@Override
-			public void canceled() {
+	void gameOver(){
+		gameOver = true;
+		players[players.length-1].time = timeFromStart;
+		players[players.length-1].name = generateRndName();
+		sortTable();
+	}
+
+	String timeToString(long time){
+		return time/1000/60/60+":"+time/1000/60%60/10+time/1000/60%60%10+":"+time/1000%60/10+time/1000%60%10;
+	}
+
+	void sortTable(){
+		for (int i = 0; i < players.length; i++) {
+			if(players[i].time == 0) players[i].time = Long.MAX_VALUE;
+		}
+		for (int j = 0; j < players.length; j++) {
+			for (int i = 0; i < players.length - 1; i++) {
+				if (players[i].time > players[i + 1].time) {
+					Player p = players[i];
+					players[i] = players[i + 1];
+					players[i + 1] = p;
+				}
 			}
-		}, "Заголовок окна", "подсказка ввода", "Текст перед окном ввода");
+		}
+		for (int i = 0; i < players.length; i++) {
+			if(players[i].time == Long.MAX_VALUE) players[i].time = 0;
+		}
+	}
+
+	String showTableOfRecords(){
+		String s = "";
+		for (int i = 0; i < players.length; i++) {
+			s += i+1+" "+players[i].name+"......."+timeToString(players[i].time)+"\n";
+		}
+		return s;
+	}
+
+	String generateRndName(){
+		String name = "";
+		name += (char)MathUtils.random('A', 'Z');
+		String s = "bcdfghjklmnpqrstvwxz";
+		String g = "aeiouy";
+		for (int i = 0; i < 3; i++) {
+			name += g.charAt(MathUtils.random(g.length()-1));
+			name += s.charAt(MathUtils.random(s.length()-1));
+		}
+		return name;
 	}
 
 	@Override
