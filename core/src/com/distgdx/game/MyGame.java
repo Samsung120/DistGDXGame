@@ -3,6 +3,7 @@ package com.distgdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -30,7 +31,7 @@ public class MyGame extends ApplicationAdapter {
 	Mosquito[] mosq = new Mosquito[5];
 	int kills;
 	long timeStart, timeFromStart;
-	Player[] players = new Player[10];
+	Player[] players = new Player[6];
 	boolean gameOver = false;
 
 	@Override
@@ -58,6 +59,8 @@ public class MyGame extends ApplicationAdapter {
 		for (int i = 0; i < players.length; i++) {
 			players[i] = new Player("Noname");
 		}
+
+		loadTableOfRecords();
 
 		timeStart = TimeUtils.millis();
 	}
@@ -121,7 +124,7 @@ public class MyGame extends ApplicationAdapter {
 		font.draw(batch, "Kills: "+kills, 10, SCR_HEIGHT-10);
 		font.draw(batch, timeToString(timeFromStart), SCR_WIDTH-250, SCR_HEIGHT-10);
 		if(gameOver){
-			font.draw(batch, showTableOfRecords(), SCR_WIDTH/4f, SCR_HEIGHT/10f*9);
+			font.draw(batch, showTableOfRecords(), SCR_WIDTH/4f, SCR_HEIGHT/4f*3);
 		}
 		batch.end();
 	}
@@ -140,6 +143,7 @@ public class MyGame extends ApplicationAdapter {
 		players[players.length-1].time = timeFromStart;
 		players[players.length-1].name = generateRndName();
 		sortTable();
+		saveTableOfRecords();
 	}
 
 	String timeToString(long time){
@@ -150,9 +154,12 @@ public class MyGame extends ApplicationAdapter {
 		for (int i = 0; i < players.length; i++) {
 			if(players[i].time == 0) players[i].time = Long.MAX_VALUE;
 		}
-		for (int j = 0; j < players.length; j++) {
+		boolean flag = true;
+		while (flag) {
+			flag = false;
 			for (int i = 0; i < players.length - 1; i++) {
 				if (players[i].time > players[i + 1].time) {
+					flag = true;
 					Player p = players[i];
 					players[i] = players[i + 1];
 					players[i + 1] = p;
@@ -165,11 +172,27 @@ public class MyGame extends ApplicationAdapter {
 	}
 
 	String showTableOfRecords(){
-		String s = "";
-		for (int i = 0; i < players.length; i++) {
+		String s = "  Таблица рекордов:\n\n";
+		for (int i = 0; i < players.length-1; i++) {
 			s += i+1+" "+players[i].name+"......."+timeToString(players[i].time)+"\n";
 		}
 		return s;
+	}
+
+	void saveTableOfRecords(){
+		Preferences prefs = Gdx.app.getPreferences("Table Of Records");
+		for (int i = 0; i < players.length; i++) {
+			prefs.putString("name"+i, players[i].name);
+			prefs.putLong("time"+i, players[i].time);
+		}
+		prefs.flush();
+	}
+	void loadTableOfRecords(){
+		Preferences prefs = Gdx.app.getPreferences("Table Of Records");
+		for (int i = 0; i < players.length; i++) {
+			players[i].name = prefs.getString("name"+i, "No info");
+			players[i].time = prefs.getLong("time"+i, 0);
+		}
 	}
 
 	String generateRndName(){
