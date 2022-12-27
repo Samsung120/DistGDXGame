@@ -180,18 +180,24 @@ public class MyGame extends ApplicationAdapter {
 	}
 
 	void saveTableOfRecords(){
-		Preferences prefs = Gdx.app.getPreferences("Table Of Records");
-		for (int i = 0; i < players.length; i++) {
-			prefs.putString("name"+i, players[i].name);
-			prefs.putLong("time"+i, players[i].time);
+		try {
+			Preferences prefs = Gdx.app.getPreferences("Table Of Records");
+			for (int i = 0; i < players.length; i++) {
+				prefs.putString("name" + i, players[i].name);
+				prefs.putLong("time" + i, players[i].time);
+			}
+			prefs.flush();
+		} catch (Exception ignored){
 		}
-		prefs.flush();
 	}
 	void loadTableOfRecords(){
-		Preferences prefs = Gdx.app.getPreferences("Table Of Records");
-		for (int i = 0; i < players.length; i++) {
-			players[i].name = prefs.getString("name"+i, "No info");
-			players[i].time = prefs.getLong("time"+i, 0);
+		try {
+			Preferences prefs = Gdx.app.getPreferences("Table Of Records");
+			for (int i = 0; i < players.length; i++) {
+				players[i].name = prefs.getString("name" + i, "No info");
+				players[i].time = prefs.getLong("time" + i, 0);
+			}
+		} catch (Exception ignored){
 		}
 	}
 
