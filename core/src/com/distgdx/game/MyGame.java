@@ -2,7 +2,6 @@ package com.distgdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
@@ -22,6 +21,7 @@ public class MyGame extends ApplicationAdapter {
 	OrthographicCamera camera;
 	Vector3 touch;
 	BitmapFont font;
+	InputKeyboard keyboard;
 
 	Texture[] imgMosq = new Texture[11];
 	Texture imgBG;
@@ -32,7 +32,10 @@ public class MyGame extends ApplicationAdapter {
 	int kills;
 	long timeStart, timeFromStart;
 	Player[] players = new Player[6];
-	boolean gameOver = false;
+
+	// состояние игры
+	public static final int PLAY_GAME = 0, ENTER_NAME = 1, SHOW_TABLE = 2;
+	int state = PLAY_GAME;
 
 	@Override
 	public void create () {
@@ -40,6 +43,7 @@ public class MyGame extends ApplicationAdapter {
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
 		touch = new Vector3();
+		keyboard = new InputKeyboard(SCR_WIDTH, SCR_HEIGHT, 8);
 
 		generateFont();
 
@@ -88,15 +92,21 @@ public class MyGame extends ApplicationAdapter {
 		if(Gdx.input.justTouched()) {
 			touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camera.unproject(touch);
-			if(gameOver){
+			if(state == SHOW_TABLE){
 				gameRestart();
 			}
-			for (int i = mosq.length-1; i >= 0; i--) {
-				if(mosq[i].isAlive && mosq[i].hit(touch.x, touch.y)){
-					kills++;
-					sndMosq[MathUtils.random(sndMosq.length-1)].play();
-					if(kills == mosq.length) gameOver();
-					break;
+			if(state == ENTER_NAME) {
+				keyboard.hit(touch.x, touch.y);
+				if (keyboard.endOfEdit()) gameOver();
+			}
+			if(state == PLAY_GAME) {
+				for (int i = mosq.length - 1; i >= 0; i--) {
+					if (mosq[i].isAlive && mosq[i].hit(touch.x, touch.y)) {
+						kills++;
+						sndMosq[MathUtils.random(sndMosq.length - 1)].play();
+						if (kills == mosq.length) state = ENTER_NAME;
+						break;
+					}
 				}
 			}
 		}
@@ -104,7 +114,7 @@ public class MyGame extends ApplicationAdapter {
 		// игровые события
 		for (int i = 0; i < mosq.length; i++) mosq[i].move();
 
-		if(!gameOver) timeFromStart = TimeUtils.millis() - timeStart;
+		if(state == PLAY_GAME) timeFromStart = TimeUtils.millis() - timeStart;
 
 		// возрожджение комаров
 		/*for (int i = 0; i < mosq.length; i++) {
@@ -123,14 +133,17 @@ public class MyGame extends ApplicationAdapter {
 		}
 		font.draw(batch, "Kills: "+kills, 10, SCR_HEIGHT-10);
 		font.draw(batch, timeToString(timeFromStart), SCR_WIDTH-250, SCR_HEIGHT-10);
-		if(gameOver){
+		if(state == SHOW_TABLE){
 			font.draw(batch, showTableOfRecords(), SCR_WIDTH/4f, SCR_HEIGHT/4f*3);
+		}
+		if(state == ENTER_NAME){
+			keyboard.draw(batch);
 		}
 		batch.end();
 	}
 
 	void gameRestart(){
-		gameOver = false;
+		state = PLAY_GAME;
 		for (int i = 0; i < mosq.length; i++) {
 			mosq[i] = new Mosquito();
 		}
@@ -139,9 +152,10 @@ public class MyGame extends ApplicationAdapter {
 	}
 
 	void gameOver(){
-		gameOver = true;
+		state = SHOW_TABLE;
 		players[players.length-1].time = timeFromStart;
-		players[players.length-1].name = generateRndName();
+		players[players.length-1].name = keyboard.getText();
+		//players[players.length-1].name = generateRndName();
 		sortTable();
 		saveTableOfRecords();
 	}
@@ -190,6 +204,7 @@ public class MyGame extends ApplicationAdapter {
 		} catch (Exception ignored){
 		}
 	}
+
 	void loadTableOfRecords(){
 		try {
 			Preferences prefs = Gdx.app.getPreferences("Table Of Records");
@@ -224,5 +239,6 @@ public class MyGame extends ApplicationAdapter {
 			imgMosq[i].dispose();
 		}
 		font.dispose();
+		keyboard.dispose();
 	}
 }
