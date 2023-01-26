@@ -1,6 +1,6 @@
 package com.distgdx.game;
 
-import static com.distgdx.game.MyGame.*;
+import static com.distgdx.game.ScreenGame.*;
 
 import com.badlogic.gdx.math.MathUtils;
 
