@@ -33,6 +33,8 @@ public class MyGame extends ApplicationAdapter {
 	long timeStart, timeFromStart;
 	Player[] players = new Player[6];
 
+	TextButton btnRestart, btnExit;
+
 	// состояние игры
 	public static final int PLAY_GAME = 0, ENTER_NAME = 1, SHOW_TABLE = 2;
 	int state = PLAY_GAME;
@@ -46,6 +48,9 @@ public class MyGame extends ApplicationAdapter {
 		keyboard = new InputKeyboard(SCR_WIDTH, SCR_HEIGHT, 8);
 
 		generateFont();
+
+		btnRestart = new TextButton(font, "RESTART", 10, 50);
+		btnExit = new TextButton(font, "EXIT", SCR_WIDTH-150, 50);
 
 		imgBG = new Texture("boloto.jpg");
 		for (int i = 0; i < imgMosq.length; i++) {
@@ -93,7 +98,8 @@ public class MyGame extends ApplicationAdapter {
 			touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 			camera.unproject(touch);
 			if(state == SHOW_TABLE){
-				gameRestart();
+				if(btnRestart.hit(touch.x, touch.y)) gameRestart();
+				if(btnExit.hit(touch.x, touch.y)) Gdx.app.exit();
 			}
 			if(state == ENTER_NAME) {
 				keyboard.hit(touch.x, touch.y);
@@ -135,6 +141,8 @@ public class MyGame extends ApplicationAdapter {
 		font.draw(batch, timeToString(timeFromStart), SCR_WIDTH-250, SCR_HEIGHT-10);
 		if(state == SHOW_TABLE){
 			font.draw(batch, showTableOfRecords(), SCR_WIDTH/4f, SCR_HEIGHT/4f*3);
+			font.draw(batch, btnRestart.text, btnRestart.x, btnRestart.y);
+			font.draw(batch, btnExit.text, btnExit.x, btnExit.y);
 		}
 		if(state == ENTER_NAME){
 			keyboard.draw(batch);

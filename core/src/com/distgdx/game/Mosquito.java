@@ -32,7 +32,7 @@ public class Mosquito {
         x += vx;
         y += vy;
         if(isAlive) {
-            outOfBounds1();
+            outOfBounds2();
             changePhase();
         }
     }

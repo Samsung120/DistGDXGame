@@ -212,7 +212,7 @@ public class InputKeyboard {
         }
     }
 
-    void generateFont(){
+    private void generateFont(){
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("ubuntumono.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.color = new Color(1, 1, 1, 1);
