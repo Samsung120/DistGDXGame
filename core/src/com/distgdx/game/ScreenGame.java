@@ -54,19 +54,14 @@ public class ScreenGame implements Screen {
 			sndMosq[i] = Gdx.audio.newSound(Gdx.files.internal("cheep"+i+".mp3"));
 		}
 
-		for (int i = 0; i < mosq.length; i++) {
-			mosq[i] = new Mosquito();
-		}
-
 		for (int i = 0; i < players.length; i++) {
 			players[i] = new Player("Noname");
 		}
 
 		loadTableOfRecords();
-		timeStart = TimeUtils.millis();
 	}
 
-	void gameRestart(){
+	void gameStart(){
 		state = PLAY_GAME;
 		for (int i = 0; i < mosq.length; i++) {
 			mosq[i] = new Mosquito();
@@ -154,7 +149,7 @@ public class ScreenGame implements Screen {
 
 	@Override
 	public void show() {
-
+		gameStart();
 	}
 
 	@Override
@@ -164,7 +159,7 @@ public class ScreenGame implements Screen {
 			g.touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
 			g.camera.unproject(g.touch);
 			if(state == SHOW_TABLE){
-				if(btnRestart.hit(g.touch.x, g.touch.y)) gameRestart();
+				if(btnRestart.hit(g.touch.x, g.touch.y)) gameStart();
 				if(btnExit.hit(g.touch.x, g.touch.y)) {
 					g.setScreen(g.screenIntro);
 				}
