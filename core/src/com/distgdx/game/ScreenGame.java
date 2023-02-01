@@ -165,7 +165,9 @@ public class ScreenGame implements Screen {
 			g.camera.unproject(g.touch);
 			if(state == SHOW_TABLE){
 				if(btnRestart.hit(g.touch.x, g.touch.y)) gameRestart();
-				if(btnExit.hit(g.touch.x, g.touch.y)) Gdx.app.exit();
+				if(btnExit.hit(g.touch.x, g.touch.y)) {
+					g.setScreen(g.screenIntro);
+				}
 			}
 			if(state == ENTER_NAME) {
 				if (keyboard.endOfEdit(g.touch.x, g.touch.y)) gameOver();

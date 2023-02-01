@@ -18,9 +18,17 @@ import com.badlogic.gdx.utils.TimeUtils;
 
 public class ScreenIntro implements Screen {
     MyGame g;
+    Texture imgBG;
+
+    TextButton btnPlay, btnSettings, btnAbout, btnExit;
 
     public ScreenIntro(MyGame context){
         g = context;
+        btnPlay = new TextButton(g.font, "PLAY", 600, 600);
+        btnSettings = new TextButton(g.font, "SETTINGS", 600, 500);
+        btnAbout = new TextButton(g.font, "ABOUT", 600, 400);
+        btnExit = new TextButton(g.font, "EXIT", 600, 300);
+        imgBG = new Texture("bg1.jpg");
     }
 
     @Override
@@ -30,7 +38,28 @@ public class ScreenIntro implements Screen {
 
     @Override
     public void render(float delta) {
+        // обработка касаний
+        if(Gdx.input.justTouched()) {
+            g.touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            g.camera.unproject(g.touch);
+            if(btnPlay.hit(g.touch.x, g.touch.y)){
+                g.setScreen(g.screenGame);
+            }
+            if(btnExit.hit(g.touch.x, g.touch.y)){
+                Gdx.app.exit();
+            }
+        }
 
+        // отрисовка графики
+        g.camera.update();
+        g.batch.setProjectionMatrix(g.camera.combined);
+        g.batch.begin();
+        g.batch.draw(imgBG, 0, 0, SCR_WIDTH, SCR_HEIGHT);
+        btnPlay.font.draw(g.batch, btnPlay.text, btnPlay.x, btnPlay.y);
+        btnSettings.font.draw(g.batch, btnSettings.text, btnSettings.x, btnSettings.y);
+        btnAbout.font.draw(g.batch, btnAbout.text, btnAbout.x, btnAbout.y);
+        btnExit.font.draw(g.batch, btnExit.text, btnExit.x, btnExit.y);
+        g.batch.end();
     }
 
     @Override
@@ -55,6 +84,6 @@ public class ScreenIntro implements Screen {
 
     @Override
     public void dispose() {
-
+        imgBG.dispose();
     }
 }

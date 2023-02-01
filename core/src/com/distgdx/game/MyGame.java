@@ -27,8 +27,9 @@ public class MyGame extends Game {
         touch = new Vector3();
         generateFont();
 
+        screenIntro = new ScreenIntro(this);
         screenGame = new ScreenGame(this);
-        setScreen(screenGame);
+        setScreen(screenIntro);
     }
 
     void generateFont(){
