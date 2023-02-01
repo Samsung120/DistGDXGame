@@ -1,6 +1,8 @@
 package com.distgdx.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import static com.distgdx.game.MyGame.SCR_HEIGHT;
+import static com.distgdx.game.MyGame.SCR_WIDTH;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
@@ -16,12 +18,8 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class ScreenGame implements Screen {
-	public static final int SCR_WIDTH = 1280, SCR_HEIGHT = 720;
+	MyGame g;
 
-	SpriteBatch batch;
-	OrthographicCamera camera;
-	Vector3 touch;
-	BitmapFont font;
 	InputKeyboard keyboard;
 
 	Texture[] imgMosq = new Texture[11];
@@ -40,17 +38,12 @@ public class ScreenGame implements Screen {
 	public static final int PLAY_GAME = 0, ENTER_NAME = 1, SHOW_TABLE = 2;
 	int state = PLAY_GAME;
 
-	public ScreenGame () {
-		batch = new SpriteBatch();
-		camera = new OrthographicCamera();
-		camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
-		touch = new Vector3();
+	public ScreenGame (MyGame context) {
+		g = context;
 		keyboard = new InputKeyboard(SCR_WIDTH, SCR_HEIGHT, 8);
 
-		generateFont();
-
-		btnRestart = new TextButton(font, "RESTART", 10, 50);
-		btnExit = new TextButton(font, "EXIT", SCR_WIDTH-150, 50);
+		btnRestart = new TextButton(g.font, "RESTART", 10, 50);
+		btnExit = new TextButton(g.font, "EXIT", SCR_WIDTH-150, 50);
 
 		imgBG = new Texture("boloto.jpg");
 		for (int i = 0; i < imgMosq.length; i++) {
@@ -70,25 +63,7 @@ public class ScreenGame implements Screen {
 		}
 
 		loadTableOfRecords();
-
 		timeStart = TimeUtils.millis();
-	}
-
-	void generateFont(){
-		FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("wellwaitfree.otf"));
-		FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-		parameter.size = 50;
-		parameter.color = new Color().set(1, 0.9f, 0.3f, 1);
-		parameter.borderColor = Color.BLACK;
-		parameter.borderWidth = 2;
-		parameter.borderStraight = true;
-		//parameter.characters = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
-		String s = "";
-		for (char i = 0x20; i < 0x7B; i++) s += i;
-		for (char i = 0x401; i < 0x452; i++) s += i;
-		parameter.characters = s;
-		font = generator.generateFont(parameter);
-		generator.dispose();
 	}
 
 	void gameRestart(){
@@ -186,19 +161,18 @@ public class ScreenGame implements Screen {
 	public void render(float delta) {
 		// обработка касаний
 		if(Gdx.input.justTouched()) {
-			touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-			camera.unproject(touch);
+			g.touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+			g.camera.unproject(g.touch);
 			if(state == SHOW_TABLE){
-				if(btnRestart.hit(touch.x, touch.y)) gameRestart();
-				if(btnExit.hit(touch.x, touch.y)) Gdx.app.exit();
+				if(btnRestart.hit(g.touch.x, g.touch.y)) gameRestart();
+				if(btnExit.hit(g.touch.x, g.touch.y)) Gdx.app.exit();
 			}
 			if(state == ENTER_NAME) {
-				keyboard.hit(touch.x, touch.y);
-				if (keyboard.endOfEdit()) gameOver();
+				if (keyboard.endOfEdit(g.touch.x, g.touch.y)) gameOver();
 			}
 			if(state == PLAY_GAME) {
 				for (int i = mosq.length - 1; i >= 0; i--) {
-					if (mosq[i].isAlive && mosq[i].hit(touch.x, touch.y)) {
+					if (mosq[i].isAlive && mosq[i].hit(g.touch.x, g.touch.y)) {
 						kills++;
 						sndMosq[MathUtils.random(sndMosq.length - 1)].play();
 						if (kills == mosq.length) state = ENTER_NAME;
@@ -221,24 +195,24 @@ public class ScreenGame implements Screen {
 		}*/
 
 		// отрисовка графики
-		camera.update();
-		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		batch.draw(imgBG, 0, 0, SCR_WIDTH, SCR_HEIGHT);
+		g.camera.update();
+		g.batch.setProjectionMatrix(g.camera.combined);
+		g.batch.begin();
+		g.batch.draw(imgBG, 0, 0, SCR_WIDTH, SCR_HEIGHT);
 		for (int i = 0; i < mosq.length; i++) {
-			batch.draw(imgMosq[mosq[i].phase], mosq[i].scrX(), mosq[i].scrY(), mosq[i].width, mosq[i].height, 0, 0, 500, 500, mosq[i].isFlip(), false);
+			g.batch.draw(imgMosq[mosq[i].phase], mosq[i].scrX(), mosq[i].scrY(), mosq[i].width, mosq[i].height, 0, 0, 500, 500, mosq[i].isFlip(), false);
 		}
-		font.draw(batch, "Kills: "+kills, 10, SCR_HEIGHT-10);
-		font.draw(batch, timeToString(timeFromStart), SCR_WIDTH-250, SCR_HEIGHT-10);
+		g.font.draw(g.batch, "Kills: "+kills, 10, SCR_HEIGHT-10);
+		g.font.draw(g.batch, timeToString(timeFromStart), SCR_WIDTH-250, SCR_HEIGHT-10);
 		if(state == SHOW_TABLE){
-			font.draw(batch, showTableOfRecords(), SCR_WIDTH/4f, SCR_HEIGHT/4f*3);
-			font.draw(batch, btnRestart.text, btnRestart.x, btnRestart.y);
-			font.draw(batch, btnExit.text, btnExit.x, btnExit.y);
+			g.font.draw(g.batch, showTableOfRecords(), SCR_WIDTH/4f, SCR_HEIGHT/4f*3);
+			g.font.draw(g.batch, btnRestart.text, btnRestart.x, btnRestart.y);
+			g.font.draw(g.batch, btnExit.text, btnExit.x, btnExit.y);
 		}
 		if(state == ENTER_NAME){
-			keyboard.draw(batch);
+			keyboard.draw(g.batch);
 		}
-		batch.end();
+		g.batch.end();
 	}
 
 	@Override
@@ -263,7 +237,6 @@ public class ScreenGame implements Screen {
 
 	@Override
 	public void dispose () {
-		batch.dispose();
 		for (int i = 0; i < imgMosq.length; i++) {
 			imgMosq[i].dispose();
 		}
@@ -271,7 +244,6 @@ public class ScreenGame implements Screen {
 		for (int i = 0; i < sndMosq.length; i++) {
 			imgMosq[i].dispose();
 		}
-		font.dispose();
 		keyboard.dispose();
 	}
 }

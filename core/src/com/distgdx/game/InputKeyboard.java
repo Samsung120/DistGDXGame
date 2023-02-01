@@ -133,7 +133,7 @@ public class InputKeyboard {
     }
 
     // проверяем, куда нажали
-    public void hit(float tx, float ty){
+    private void hit(float tx, float ty){
         for (int i = 0; i < keys.size; i++) {
             if(!keys.get(i).hit(tx, ty).equals("")){
                 keyPressed = i;
@@ -176,7 +176,8 @@ public class InputKeyboard {
     }
 
     // окончание редактирования ввода (нажата кнопка enter)
-    public boolean endOfEdit(){
+    public boolean endOfEdit(float tx, float ty){
+        hit(tx, ty);
         if(!endOfEdit) return false;
         endOfEdit = false;
         return true;
