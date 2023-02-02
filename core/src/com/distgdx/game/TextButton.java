@@ -19,6 +19,10 @@ public class TextButton {
         height = gl.height;
     }
 
+    public void setText(String text) {
+        this.text = text;
+    }
+
     boolean hit(float tx, float ty){
         return x < tx && tx < x+width && y-height < ty && ty < y;
     }

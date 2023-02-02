@@ -171,7 +171,7 @@ public class ScreenGame implements Screen {
 				for (int i = mosq.length - 1; i >= 0; i--) {
 					if (mosq[i].isAlive && mosq[i].hit(g.touch.x, g.touch.y)) {
 						kills++;
-						sndMosq[MathUtils.random(sndMosq.length - 1)].play();
+						if(g.soundOn) sndMosq[MathUtils.random(sndMosq.length - 1)].play();
 						if (kills == mosq.length) state = ENTER_NAME;
 						break;
 					}

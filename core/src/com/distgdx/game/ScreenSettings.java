@@ -38,7 +38,12 @@ public class ScreenSettings implements Screen {
 
             }
             if(btnSound.hit(g.touch.x, g.touch.y)){
-
+                g.soundOn = !g.soundOn;
+                if(g.soundOn) {
+                    btnSound.setText("SOUND ON");
+                } else {
+                    btnSound.setText("SOUND OFF");
+                }
             }
             if(btnMusic.hit(g.touch.x, g.touch.y)){
 

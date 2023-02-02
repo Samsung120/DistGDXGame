@@ -21,6 +21,8 @@ public class MyGame extends Game {
     ScreenSettings screenSettings;
     ScreenAbout screenAbout;
 
+    boolean soundOn = true;
+
     @Override
     public void create() {
         batch = new SpriteBatch();
