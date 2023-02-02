@@ -6,21 +6,26 @@ import static com.distgdx.game.MyGame.SCR_WIDTH;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class ScreenSettings implements Screen {
     MyGame g;
     Texture imgBG;
 
     TextButton btnMosquitos, btnSound, btnMusic, btnLanguage, btnBack;
+    Slider slider;
 
     public ScreenSettings(MyGame context){
         g = context;
         btnMosquitos = new TextButton(g.fontLarge, "NUMBER MOSQUITOS", 200, 600);
         btnSound = new TextButton(g.fontLarge, "SOUND ON", 200, 500);
         btnMusic = new TextButton(g.fontLarge, "MUSIC ON", 200, 400);
-        btnLanguage = new TextButton(g.fontLarge, "LANGUAGE ENG", 200, 300);
-        btnBack = new TextButton(g.fontLarge, "BACK", 200, 200);
+        //btnLanguage = new TextButton(g.fontLarge, "LANGUAGE ENG", 200, 300);
+        btnBack = new TextButton(g.fontLarge, "BACK", 200, 300);
         imgBG = new Texture("boloto2.jpg");
+        /*Skin skin = new Skin();
+        slider = new Slider(1, 100, 1, false, skin);
+        slider.setPosition(100, 100);*/
     }
 
     @Override
@@ -48,9 +53,7 @@ public class ScreenSettings implements Screen {
             if(btnMusic.hit(g.touch.x, g.touch.y)){
 
             }
-            if(btnLanguage.hit(g.touch.x, g.touch.y)){
-
-            }
+            //if(btnLanguage.hit(g.touch.x, g.touch.y)){ }
             if(btnBack.hit(g.touch.x, g.touch.y)){
                 g.setScreen(g.screenIntro);
             }
@@ -64,7 +67,7 @@ public class ScreenSettings implements Screen {
         btnMosquitos.font.draw(g.batch, btnMosquitos.text, btnMosquitos.x, btnMosquitos.y);
         btnSound.font.draw(g.batch, btnSound.text, btnSound.x, btnSound.y);
         btnMusic.font.draw(g.batch, btnMusic.text, btnMusic.x, btnMusic.y);
-        btnLanguage.font.draw(g.batch, btnLanguage.text, btnLanguage.x, btnLanguage.y);
+        //btnLanguage.font.draw(g.batch, btnLanguage.text, btnLanguage.x, btnLanguage.y);
         btnBack.font.draw(g.batch, btnBack.text, btnBack.x, btnBack.y);
         g.batch.end();
     }

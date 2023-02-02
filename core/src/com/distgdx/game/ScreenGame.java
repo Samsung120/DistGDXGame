@@ -6,6 +6,7 @@ import static com.distgdx.game.MyGame.SCR_WIDTH;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -20,12 +21,11 @@ import com.badlogic.gdx.utils.TimeUtils;
 public class ScreenGame implements Screen {
 	MyGame g;
 
-	InputKeyboard keyboard;
-
 	Texture[] imgMosq = new Texture[11];
 	Texture imgBG;
 
 	Sound[] sndMosq = new Sound[6];
+	Music music;
 
 	Mosquito[] mosq = new Mosquito[5];
 	int kills;
@@ -40,7 +40,6 @@ public class ScreenGame implements Screen {
 
 	public ScreenGame (MyGame context) {
 		g = context;
-		keyboard = new InputKeyboard(SCR_WIDTH, SCR_HEIGHT, 8);
 
 		btnRestart = new TextButton(g.font, "RESTART", 10, 50);
 		btnBack = new TextButton(g.font, "BACK", SCR_WIDTH-150, 50);
@@ -73,7 +72,7 @@ public class ScreenGame implements Screen {
 	void gameOver(){
 		state = SHOW_TABLE;
 		players[players.length-1].time = timeFromStart;
-		players[players.length-1].name = keyboard.getText();
+		players[players.length-1].name = g.keyboard.getText();
 		//players[players.length-1].name = generateRndName();
 		sortTable();
 		saveTableOfRecords();
@@ -165,7 +164,7 @@ public class ScreenGame implements Screen {
 				}
 			}
 			if(state == ENTER_NAME) {
-				if (keyboard.endOfEdit(g.touch.x, g.touch.y)) gameOver();
+				if (g.keyboard.endOfEdit(g.touch.x, g.touch.y)) gameOver();
 			}
 			if(state == PLAY_GAME) {
 				for (int i = mosq.length - 1; i >= 0; i--) {
@@ -207,7 +206,7 @@ public class ScreenGame implements Screen {
 			g.font.draw(g.batch, btnBack.text, btnBack.x, btnBack.y);
 		}
 		if(state == ENTER_NAME){
-			keyboard.draw(g.batch);
+			g.keyboard.draw(g.batch);
 		}
 		g.batch.end();
 	}
@@ -229,7 +228,7 @@ public class ScreenGame implements Screen {
 
 	@Override
 	public void hide() {
-
+		//music.stop();
 	}
 
 	@Override
@@ -241,6 +240,6 @@ public class ScreenGame implements Screen {
 		for (int i = 0; i < sndMosq.length; i++) {
 			imgMosq[i].dispose();
 		}
-		keyboard.dispose();
+		g.keyboard.dispose();
 	}
 }

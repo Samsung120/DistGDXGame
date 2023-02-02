@@ -15,6 +15,7 @@ public class MyGame extends Game {
     OrthographicCamera camera;
     Vector3 touch;
     BitmapFont font, fontLarge;
+    InputKeyboard keyboard;
 
     ScreenIntro screenIntro;
     ScreenGame screenGame;
@@ -30,6 +31,7 @@ public class MyGame extends Game {
         camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
         touch = new Vector3();
         generateFont();
+        keyboard = new InputKeyboard(SCR_WIDTH, SCR_HEIGHT, 8);
 
         screenIntro = new ScreenIntro(this);
         screenGame = new ScreenGame(this);
