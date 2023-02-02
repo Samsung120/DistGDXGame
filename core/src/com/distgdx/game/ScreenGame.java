@@ -32,7 +32,7 @@ public class ScreenGame implements Screen {
 	long timeStart, timeFromStart;
 	Player[] players = new Player[6];
 
-	TextButton btnRestart, btnExit;
+	TextButton btnRestart, btnBack;
 
 	// состояние игры
 	public static final int PLAY_GAME = 0, ENTER_NAME = 1, SHOW_TABLE = 2;
@@ -43,9 +43,9 @@ public class ScreenGame implements Screen {
 		keyboard = new InputKeyboard(SCR_WIDTH, SCR_HEIGHT, 8);
 
 		btnRestart = new TextButton(g.font, "RESTART", 10, 50);
-		btnExit = new TextButton(g.font, "EXIT", SCR_WIDTH-150, 50);
+		btnBack = new TextButton(g.font, "BACK", SCR_WIDTH-150, 50);
 
-		imgBG = new Texture("boloto.jpg");
+		imgBG = new Texture("boloto0.jpg");
 		for (int i = 0; i < imgMosq.length; i++) {
 			imgMosq[i] = new Texture("mosq"+i+".png");
 		}
@@ -160,7 +160,7 @@ public class ScreenGame implements Screen {
 			g.camera.unproject(g.touch);
 			if(state == SHOW_TABLE){
 				if(btnRestart.hit(g.touch.x, g.touch.y)) gameStart();
-				if(btnExit.hit(g.touch.x, g.touch.y)) {
+				if(btnBack.hit(g.touch.x, g.touch.y)) {
 					g.setScreen(g.screenIntro);
 				}
 			}
@@ -204,7 +204,7 @@ public class ScreenGame implements Screen {
 		if(state == SHOW_TABLE){
 			g.font.draw(g.batch, showTableOfRecords(), SCR_WIDTH/4f, SCR_HEIGHT/4f*3);
 			g.font.draw(g.batch, btnRestart.text, btnRestart.x, btnRestart.y);
-			g.font.draw(g.batch, btnExit.text, btnExit.x, btnExit.y);
+			g.font.draw(g.batch, btnBack.text, btnBack.x, btnBack.y);
 		}
 		if(state == ENTER_NAME){
 			keyboard.draw(g.batch);

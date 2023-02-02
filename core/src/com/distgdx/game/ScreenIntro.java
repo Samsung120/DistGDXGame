@@ -24,11 +24,11 @@ public class ScreenIntro implements Screen {
 
     public ScreenIntro(MyGame context){
         g = context;
-        btnPlay = new TextButton(g.font, "PLAY", 600, 600);
-        btnSettings = new TextButton(g.font, "SETTINGS", 600, 500);
-        btnAbout = new TextButton(g.font, "ABOUT", 600, 400);
-        btnExit = new TextButton(g.font, "EXIT", 600, 300);
-        imgBG = new Texture("bg1.jpg");
+        btnPlay = new TextButton(g.fontLarge, "PLAY", 500, 600);
+        btnSettings = new TextButton(g.fontLarge, "SETTINGS", 500, 500);
+        btnAbout = new TextButton(g.fontLarge, "ABOUT", 500, 400);
+        btnExit = new TextButton(g.fontLarge, "EXIT", 500, 300);
+        imgBG = new Texture("boloto1.jpg");
     }
 
     @Override
@@ -44,6 +44,12 @@ public class ScreenIntro implements Screen {
             g.camera.unproject(g.touch);
             if(btnPlay.hit(g.touch.x, g.touch.y)){
                 g.setScreen(g.screenGame);
+            }
+            if(btnSettings.hit(g.touch.x, g.touch.y)){
+                g.setScreen(g.screenSettings);
+            }
+            if(btnAbout.hit(g.touch.x, g.touch.y)){
+                g.setScreen(g.screenAbout);
             }
             if(btnExit.hit(g.touch.x, g.touch.y)){
                 Gdx.app.exit();

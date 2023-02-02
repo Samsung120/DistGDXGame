@@ -14,10 +14,12 @@ public class MyGame extends Game {
     SpriteBatch batch;
     OrthographicCamera camera;
     Vector3 touch;
-    BitmapFont font;
+    BitmapFont font, fontLarge;
 
     ScreenIntro screenIntro;
     ScreenGame screenGame;
+    ScreenSettings screenSettings;
+    ScreenAbout screenAbout;
 
     @Override
     public void create() {
@@ -29,6 +31,8 @@ public class MyGame extends Game {
 
         screenIntro = new ScreenIntro(this);
         screenGame = new ScreenGame(this);
+        screenSettings = new ScreenSettings(this);
+        screenAbout = new ScreenAbout(this);
         setScreen(screenIntro);
     }
 
@@ -42,6 +46,8 @@ public class MyGame extends Game {
         parameter.borderStraight = true;
         parameter.characters = "абвгдеёжзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyzАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;:,{}\"´`'<>";
         font = generator.generateFont(parameter);
+        parameter.size = 70;
+        fontLarge = generator.generateFont(parameter);
         generator.dispose();
     }
 
