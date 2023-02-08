@@ -12,16 +12,18 @@ public class ScreenSettings implements Screen {
     MyGame g;
     Texture imgBG;
 
-    TextButton btnMosquitos, btnSound, btnMusic, btnLanguage, btnBack;
-    Slider slider;
+    TextButton btnMosquitos, btnSound, btnMusic, btnClearTable, btnBack;
+    //Slider slider;
+    // состояние
+    boolean enterName;
 
     public ScreenSettings(MyGame context){
         g = context;
-        btnMosquitos = new TextButton(g.fontLarge, "NUMBER MOSQUITOS", 200, 600);
+        btnMosquitos = new TextButton(g.fontLarge, "MOSQUITOS: "+g.numMosquitos, 200, 600);
         btnSound = new TextButton(g.fontLarge, "SOUND ON", 200, 500);
         btnMusic = new TextButton(g.fontLarge, "MUSIC ON", 200, 400);
-        //btnLanguage = new TextButton(g.fontLarge, "LANGUAGE ENG", 200, 300);
-        btnBack = new TextButton(g.fontLarge, "BACK", 200, 300);
+        btnClearTable = new TextButton(g.fontLarge, "CLEAR TABLE", 200, 300);
+        btnBack = new TextButton(g.fontLarge, "BACK", 200, 200);
         imgBG = new Texture("boloto2.jpg");
         /*Skin skin = new Skin();
         slider = new Slider(1, 100, 1, false, skin);
@@ -39,23 +41,50 @@ public class ScreenSettings implements Screen {
         if(Gdx.input.justTouched()) {
             g.touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             g.camera.unproject(g.touch);
-            if(btnMosquitos.hit(g.touch.x, g.touch.y)){
-
-            }
-            if(btnSound.hit(g.touch.x, g.touch.y)){
-                g.soundOn = !g.soundOn;
-                if(g.soundOn) {
-                    btnSound.setText("SOUND ON");
-                } else {
-                    btnSound.setText("SOUND OFF");
+            if(enterName) {
+                if(g.keyboard.endOfEdit(g.touch.x, g.touch.y)) {
+                    enterName = false;
+                    String s = g.keyboard.getText();
+                    int x;
+                    try {
+                        x = Integer.parseInt(s);
+                    } catch (Exception e){
+                        x = 0;
+                    }
+                    if(x>0 && x<1000) {
+                        g.numMosquitos = x;
+                        btnMosquitos.setText("MOSQUITOS: "+g.numMosquitos);
+                    }
                 }
-            }
-            if(btnMusic.hit(g.touch.x, g.touch.y)){
+            } else {
+                if (btnMosquitos.hit(g.touch.x, g.touch.y)) {
+                    enterName = true;
+                }
+                if (btnSound.hit(g.touch.x, g.touch.y)) {
+                    g.soundOn = !g.soundOn;
+                    if (g.soundOn) {
+                        btnSound.setText("SOUND ON");
+                    } else {
+                        btnSound.setText("SOUND OFF");
+                    }
+                }
+                if (btnMusic.hit(g.touch.x, g.touch.y)) {
+                    g.musicOn = !g.musicOn;
+                    btnMusic.setText(g.musicOn ? "MUSIC ON" : "MUSIC OFF");
+                }
+                if (btnMusic.hit(g.touch.x, g.touch.y)) {
 
-            }
-            //if(btnLanguage.hit(g.touch.x, g.touch.y)){ }
-            if(btnBack.hit(g.touch.x, g.touch.y)){
-                g.setScreen(g.screenIntro);
+                }
+                if(btnClearTable.hit(g.touch.x, g.touch.y)){
+                    for (int i = 0; i < g.screenGame.players.length; i++) {
+                        g.screenGame.players[i].name = "Noname";
+                        g.screenGame.players[i].time = 0;
+                        g.screenGame.saveTableOfRecords();
+                    }
+                }
+                if (btnBack.hit(g.touch.x, g.touch.y)) {
+                    g.setScreen(g.screenIntro);
+                }
             }
         }
 
@@ -67,8 +96,11 @@ public class ScreenSettings implements Screen {
         btnMosquitos.font.draw(g.batch, btnMosquitos.text, btnMosquitos.x, btnMosquitos.y);
         btnSound.font.draw(g.batch, btnSound.text, btnSound.x, btnSound.y);
         btnMusic.font.draw(g.batch, btnMusic.text, btnMusic.x, btnMusic.y);
-        //btnLanguage.font.draw(g.batch, btnLanguage.text, btnLanguage.x, btnLanguage.y);
+        btnClearTable.font.draw(g.batch, btnClearTable.text, btnClearTable.x, btnClearTable.y);
         btnBack.font.draw(g.batch, btnBack.text, btnBack.x, btnBack.y);
+        if(enterName){
+            g.keyboard.draw(g.batch);
+        }
         g.batch.end();
     }
 

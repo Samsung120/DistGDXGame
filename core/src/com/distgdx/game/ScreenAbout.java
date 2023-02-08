@@ -12,11 +12,17 @@ public class ScreenAbout implements Screen {
     Texture imgBG;
 
     TextButton btnBack;
+    String textAbout =  "Данная супер-игра-кликер создана\n" +
+                        "в рамках обучения в IT-школе Samsung\n" +
+                        " в период с октября 2022 по февраль\n" +
+                        "2023 года.\n" +
+                        "Цель - перебить комаров-кровососов.\n" +
+                        "Все права не защищены.";
 
     public ScreenAbout(MyGame context){
         g = context;
 
-        btnBack = new TextButton(g.fontLarge, "BACK", 200, 200);
+        btnBack = new TextButton(g.fontLarge, "BACK", 100, 100);
         imgBG = new Texture("boloto3.jpg");
     }
 
@@ -42,6 +48,7 @@ public class ScreenAbout implements Screen {
         g.batch.setProjectionMatrix(g.camera.combined);
         g.batch.begin();
         g.batch.draw(imgBG, 0, 0, SCR_WIDTH, SCR_HEIGHT);
+        g.font.draw(g.batch, textAbout, 100, SCR_HEIGHT-100);
         btnBack.font.draw(g.batch, btnBack.text, btnBack.x, btnBack.y);
         g.batch.end();
     }

@@ -23,6 +23,8 @@ public class MyGame extends Game {
     ScreenAbout screenAbout;
 
     boolean soundOn = true;
+    boolean musicOn = true;
+    int numMosquitos = 10;
 
     @Override
     public void create() {

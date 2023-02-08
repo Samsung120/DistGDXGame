@@ -27,7 +27,7 @@ public class ScreenGame implements Screen {
 	Sound[] sndMosq = new Sound[6];
 	Music music;
 
-	Mosquito[] mosq = new Mosquito[5];
+	Mosquito[] mosq;
 	int kills;
 	long timeStart, timeFromStart;
 	Player[] players = new Player[6];
@@ -40,6 +40,7 @@ public class ScreenGame implements Screen {
 
 	public ScreenGame (MyGame context) {
 		g = context;
+		mosq = new Mosquito[g.numMosquitos];
 
 		btnRestart = new TextButton(g.font, "RESTART", 10, 50);
 		btnBack = new TextButton(g.font, "BACK", SCR_WIDTH-150, 50);
@@ -62,6 +63,7 @@ public class ScreenGame implements Screen {
 
 	void gameStart(){
 		state = PLAY_GAME;
+		mosq = new Mosquito[g.numMosquitos];
 		for (int i = 0; i < mosq.length; i++) {
 			mosq[i] = new Mosquito();
 		}
