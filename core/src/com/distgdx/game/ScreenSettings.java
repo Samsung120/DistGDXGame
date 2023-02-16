@@ -6,7 +6,6 @@ import static com.distgdx.game.MyGame.SCR_WIDTH;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public class ScreenSettings implements Screen {
     MyGame g;
@@ -15,7 +14,7 @@ public class ScreenSettings implements Screen {
     TextButton btnMosquitos, btnSound, btnMusic, btnClearTable, btnBack;
     //Slider slider;
     // состояние
-    boolean enterName;
+    boolean enterNumMosquitos;
 
     public ScreenSettings(MyGame context){
         g = context;
@@ -41,9 +40,9 @@ public class ScreenSettings implements Screen {
         if(Gdx.input.justTouched()) {
             g.touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             g.camera.unproject(g.touch);
-            if(enterName) {
+            if(enterNumMosquitos) {
                 if(g.keyboard.endOfEdit(g.touch.x, g.touch.y)) {
-                    enterName = false;
+                    enterNumMosquitos = false;
                     String s = g.keyboard.getText();
                     int x;
                     try {
@@ -58,7 +57,7 @@ public class ScreenSettings implements Screen {
                 }
             } else {
                 if (btnMosquitos.hit(g.touch.x, g.touch.y)) {
-                    enterName = true;
+                    enterNumMosquitos = true;
                 }
                 if (btnSound.hit(g.touch.x, g.touch.y)) {
                     g.soundOn = !g.soundOn;
@@ -72,18 +71,17 @@ public class ScreenSettings implements Screen {
                     g.musicOn = !g.musicOn;
                     btnMusic.setText(g.musicOn ? "MUSIC ON" : "MUSIC OFF");
                 }
-                if (btnMusic.hit(g.touch.x, g.touch.y)) {
-
-                }
                 if(btnClearTable.hit(g.touch.x, g.touch.y)){
                     for (int i = 0; i < g.screenGame.players.length; i++) {
                         g.screenGame.players[i].name = "Noname";
                         g.screenGame.players[i].time = 0;
                         g.screenGame.saveTableOfRecords();
                     }
+                    btnClearTable.text = "TABLE CLEARED";
                 }
                 if (btnBack.hit(g.touch.x, g.touch.y)) {
                     g.setScreen(g.screenIntro);
+                    btnClearTable.text = "CLEAR TABLE";
                 }
             }
         }
@@ -98,7 +96,7 @@ public class ScreenSettings implements Screen {
         btnMusic.font.draw(g.batch, btnMusic.text, btnMusic.x, btnMusic.y);
         btnClearTable.font.draw(g.batch, btnClearTable.text, btnClearTable.x, btnClearTable.y);
         btnBack.font.draw(g.batch, btnBack.text, btnBack.x, btnBack.y);
-        if(enterName){
+        if(enterNumMosquitos){
             g.keyboard.draw(g.batch);
         }
         g.batch.end();

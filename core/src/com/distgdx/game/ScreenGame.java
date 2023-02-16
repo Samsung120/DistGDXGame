@@ -18,6 +18,9 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 public class ScreenGame implements Screen {
 	MyGame g;
 
@@ -51,8 +54,11 @@ public class ScreenGame implements Screen {
 		}
 
 		for (int i = 0; i < sndMosq.length; i++) {
-			sndMosq[i] = Gdx.audio.newSound(Gdx.files.internal("cheep"+i+".mp3"));
+			sndMosq[i] = Gdx.audio.newSound(Gdx.files.internal("sound/cheep"+i+".mp3"));
 		}
+		music = Gdx.audio.newMusic(Gdx.files.internal("sound/IDBones.mp3"));
+		music.setLooping(true);
+		music.setVolume(0.4f);
 
 		for (int i = 0; i < players.length; i++) {
 			players[i] = new Player("Noname");
@@ -68,6 +74,7 @@ public class ScreenGame implements Screen {
 			mosq[i] = new Mosquito();
 		}
 		kills = 0;
+		if(g.musicOn) music.play();
 		timeStart = TimeUtils.millis();
 	}
 
@@ -88,7 +95,16 @@ public class ScreenGame implements Screen {
 		for (int i = 0; i < players.length; i++) {
 			if(players[i].time == 0) players[i].time = Long.MAX_VALUE;
 		}
-		boolean flag = true;
+		class Cmp implements Comparator<Player>{
+			@Override
+			public int compare(Player p1, Player p2) {
+				if(p1.time>p2.time) return 1;
+				if(p1.time<p2.time) return -1;
+				return 0;
+			}
+		}
+		Arrays.sort(players, new Cmp());
+		/*boolean flag = true;
 		while (flag) {
 			flag = false;
 			for (int i = 0; i < players.length - 1; i++) {
@@ -99,7 +115,7 @@ public class ScreenGame implements Screen {
 					players[i + 1] = p;
 				}
 			}
-		}
+		}*/
 		for (int i = 0; i < players.length; i++) {
 			if(players[i].time == Long.MAX_VALUE) players[i].time = 0;
 		}
@@ -177,6 +193,9 @@ public class ScreenGame implements Screen {
 						break;
 					}
 				}
+				if(btnBack.hit(g.touch.x, g.touch.y)) {
+					g.setScreen(g.screenIntro);
+				}
 			}
 		}
 
@@ -202,6 +221,9 @@ public class ScreenGame implements Screen {
 		}
 		g.font.draw(g.batch, "Kills: "+kills, 10, SCR_HEIGHT-10);
 		g.font.draw(g.batch, timeToString(timeFromStart), SCR_WIDTH-250, SCR_HEIGHT-10);
+		if(state == PLAY_GAME) {
+			g.font.draw(g.batch, btnBack.text, btnBack.x, btnBack.y);
+		}
 		if(state == SHOW_TABLE){
 			g.font.draw(g.batch, showTableOfRecords(), SCR_WIDTH/4f, SCR_HEIGHT/4f*3);
 			g.font.draw(g.batch, btnRestart.text, btnRestart.x, btnRestart.y);
@@ -230,7 +252,7 @@ public class ScreenGame implements Screen {
 
 	@Override
 	public void hide() {
-		//music.stop();
+		music.stop();
 	}
 
 	@Override
@@ -242,6 +264,7 @@ public class ScreenGame implements Screen {
 		for (int i = 0; i < sndMosq.length; i++) {
 			imgMosq[i].dispose();
 		}
+		music.dispose();
 		g.keyboard.dispose();
 	}
 }
